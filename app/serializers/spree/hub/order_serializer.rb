@@ -4,7 +4,7 @@ module Spree
   module Hub
     class OrderSerializer < ActiveModel::Serializer
 
-      attributes :id, :status, :channel, :email, :currency, :placed_on, :totals
+      attributes :id, :number, :status, :channel, :email, :currency, :placed_on, :updated_at, :totals
 
       has_many :line_items,  serializer: Spree::Hub::LineItemSerializer
       has_many :adjustments, serializer: Spree::Hub::AdjustmentSerializer

@@ -3,13 +3,10 @@ require 'active_model/serializer'
 module Spree
   module Hub
     class VariantSerializer < ActiveModel::Serializer
-      attributes :id, :parent_id, :name, :sku, :description, :price, :cost_price,
-                  :available_on, :permalink, :meta_description, :meta_keywords,
-                  :shipping_category, :taxons, :options, :images
+      attributes :sku, :price, :cost_price, :options, :product_id
+      attributes :product, :name
 
-      attributes :product
-
-      has_many :images, serializer: Spree::Hub::ImageSerializer
+      # has_many :images, serializer: Spree::Hub::ImageSerializer
 
 
       class << self
@@ -36,7 +33,7 @@ module Spree
       end
 
       def permalink
-        object.slug
+        object.product.permalink
       end
 
       def shipping_category

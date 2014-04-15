@@ -3,7 +3,6 @@ require 'active_model/serializer'
 module Spree
   module Hub
     class OrderSerializer < ActiveModel::Serializer
-
       attributes :id, :number, :status, :channel, :email, :currency, :placed_on, :updated_at, :totals
 
       has_many :line_items,  serializer: Spree::Hub::LineItemSerializer
@@ -30,8 +29,16 @@ module Spree
         object.state
       end
 
+      def updated_at
+        object.updated_at.getutc.try(:iso8601)
+      end
+
       def placed_on
-        object.completed_at.try(:iso8601)
+        if object.completed_at?
+          object.completed_at.getutc.try(:iso8601)
+        else
+          object.created_at.getutc.try(:iso8601)
+        end
       end
 
       def totals

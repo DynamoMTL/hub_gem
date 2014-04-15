@@ -4,7 +4,7 @@ module Spree
   module Hub
     class OrderSerializer < ActiveModel::Serializer
 
-      attributes :id, :status, :channel, :email, :currency, :placed_on, :totals
+      attributes :id, :status, :channel, :email, :currency, :placed_on, :updated_at, :totals
 
       has_many :line_items,  serializer: Spree::Hub::LineItemSerializer
       has_many :adjustments, serializer: Spree::Hub::AdjustmentSerializer
@@ -14,6 +14,13 @@ module Spree
       has_one :billing_address, serializer: Spree::Hub::AddressSerializer
 
       has_many :shipments, serializer: ShipmentSerializer
+      
+      class << self
+        def push_it(order)
+          payload = ActiveModel::ArraySerializer.new([order], each_serializer: OrderSerializer, root: 'orders').to_json
+          Client.push(payload)
+        end
+      end
 
       def id
         object.number
@@ -23,8 +30,16 @@ module Spree
         object.state
       end
 
+      def updated_at
+        object.updated_at.getutc.try(:iso8601)
+      end
+
       def placed_on
-        object.completed_at.try(:iso8601)
+        if object.completed_at?
+          object.completed_at.getutc.try(:iso8601)
+        else
+          object.created_at.getutc.try(:iso8601)
+        end
       end
 
       def totals
@@ -37,7 +52,6 @@ module Spree
           order: object.total.to_f
         }
       end
-
     end
   end
 end

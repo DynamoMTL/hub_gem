@@ -3,12 +3,14 @@ require 'active_model/serializer'
 module Spree
   module Hub
     class CustomerSerializer < ActiveModel::Serializer
-      attributes :id, :email, :sign_in_count, :password_reset_on, :dob, :firstname, :lastname , :current_sign_in_at, :last_sign_in_at, :newsletter_on  
+      attributes :id, :email, :sign_in_count, :current_sign_in_at, :last_sign_in_at
 
-      def password_reset_on
-        object.reset_password_sent_at
-        nil
-      end
+      class << self
+        def push_it(obj)
+          ap payload = ActiveModel::ArraySerializer.new([obj], each_serializer: self, root: 'customer').to_json
+          ap Client.push(payload)
+        end
+      end      
 
     end
   end

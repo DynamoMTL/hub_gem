@@ -7,8 +7,8 @@ module Spree
 
       class << self
         def push_it(obj)
-          ap payload = ActiveModel::ArraySerializer.new([obj], each_serializer: self, root: 'customer').to_json
-          ap Client.push(payload)
+          payload = ActiveModel::ArraySerializer.new([obj], each_serializer: self, root: 'customer').to_json
+          Client.push(payload)
         end
       end      
 

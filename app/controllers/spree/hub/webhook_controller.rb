@@ -10,7 +10,7 @@ module Spree
 
         Rails.logger.warn(responder) && Rails.logger.warn(handler) if responder.nil?
 
-        render json: responder, root: false, status: responder.code
+        render json: responder, root: false, status: responder.try(:code)
       end
 
       protected

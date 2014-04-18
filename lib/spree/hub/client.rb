@@ -21,8 +21,8 @@ module Spree
           sha1 = OpenSSL::Digest.new('sha1')
           access_token = OpenSSL::HMAC.hexdigest(sha1, access_token, data)
         end
-
-        resp = 
+        puts JSON.pretty_generate(JSON.parse(json_payload))
+        ap resp = 
         HTTParty.post(
           uri,
           {

@@ -3,7 +3,7 @@ require 'active_model/serializer'
 module Spree
   module Hub
     class OrderSerializer < ActiveModel::Serializer
-      attributes :id, :status, :channel, :email, :currency, :placed_on, :updated_at, :totals, :adjustments
+      attributes :id, :status, :channel, :email, :currency, :placed_on, :updated_at, :totals, :adjustments, :token
       attributes :number
 
       has_many :line_items,  serializer: Spree::Hub::LineItemSerializer
@@ -14,14 +14,6 @@ module Spree
 
       has_many :shipments, serializer: ShipmentSerializer
       
-      class << self
-        def push_it(order)
-          root = order.state == 'complete' ? 'orders': 'carts'
-          payload = ActiveModel::ArraySerializer.new([order], each_serializer: OrderSerializer, root: root).to_json
-          Client.push(payload)
-        end
-      end
-
       def id
         object.number
       end

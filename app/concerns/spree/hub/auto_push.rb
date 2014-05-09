@@ -12,6 +12,10 @@ module Spree
 
         after_commit :push_to_hub, :if => Proc.new { Spree::Hub::Config[:enable_auto_push] }
 
+        def push_hub
+          push_to_hub
+        end
+
         def push_to_hub
           Spree::Hub::Client.push(serialized_payload)
         end

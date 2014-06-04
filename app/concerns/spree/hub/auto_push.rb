@@ -19,8 +19,10 @@ module Spree
         def push_to_hub
           Spree::Hub::Client.push(serialized_payload)
         end
-
-        def serialized_payload
+        def serializer
+          self.class.hub_serializer.constantize.new(self)
+        end
+        def serialized_payload(pretty=false)
           ActiveModel::ArraySerializer.new(
             [self],
             each_serializer: self.class.hub_serializer.constantize,

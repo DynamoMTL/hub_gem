@@ -4,8 +4,6 @@ module Spree
   module Hub
     class ProductSerializer < ActiveModel::Serializer
 
-      include Rcms::AssetsHelper
-
       attributes :id, :name, :sku, :description, :price, :cost_price,
                  :available_on, :permalink, :meta_description, :meta_keywords,
                  :shipping_category
@@ -13,6 +11,7 @@ module Spree
       attributes :taxons, :options, :properties, :images
 
       has_many :variants, serializer: Spree::Hub::VariantSerializer
+      has_many :images, serializer: Spree::Hub::ImageSerializer
 
       def id
         object.sku
@@ -44,15 +43,6 @@ module Spree
 
       def shipping_category
         object.shipping_category.name
-      end
-
-      def images
-        env_config = Rails.application.config.rcms[Rails.env]
-        cdns = env_config.key? :cdn_domains unless env_config.nil?
-        cdns = env_config[:cdn_domains] if cdns
-        cdn_url = cdns.sample if cdns
-        cdn_url ||= ""
-        object.assets.map{|a| {url: File.join(cdn_url,a.viewport_for_path('hub',{size:'393x524'},tags:['clp']).asset.file_url)}}
       end
 
       def properties
